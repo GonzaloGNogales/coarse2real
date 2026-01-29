@@ -83,9 +83,17 @@ Detailed explanations of configuration options, expected inputs, and outputs wil
 
 ## License
 
-This project will be released under a **non-commercial research license**.
+This project is licensed under Creative Commons Attribution–NonCommercial–NoDerivatives 4.0 International (CC BY-NC-ND 4.0).
 
-Commercial use is **not permitted** without prior written authorization.
+### Allowed
+- Sharing the original work with attribution
+- Using it for research/education (non-commercial)
+
+### Not allowed
+- Commercial use
+- Redistribution of modified versions
+
+See the [LICENSE](./LICENSE) file for details.
 
 ---
 
