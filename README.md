@@ -107,13 +107,15 @@ If you use this work in academic research, a citation entry will be provided onc
 
 For questions, collaborations, or commercial licensing inquiries, please contact:
 
-* **Name:** Yi Zhou
-* **Email:** [[yizhou@roblox.com](mailto:yizhou@roblox.com)]
-* **Email:** [[zhouyisjtu2012@gmail.com](mailto:zhouyisjtu2012@gmail.com)]
+
 
 
 * **Name:** Gonzalo Gomez-Nogales
 * **Email:** [[gonzalo.gomez@urjc.es](mailto:gonzalo.gomez@urjc.es)]
+
+* **Name:** Yi Zhou
+* **Email:** [[yizhou@roblox.com](mailto:yizhou@roblox.com)]
+* **Email:** [[zhouyisjtu2012@gmail.com](mailto:zhouyisjtu2012@gmail.com)]
 
 ---
 
