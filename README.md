@@ -1,4 +1,4 @@
-# Coarse-to-Real: Generative Rendering for Populated Dynamic Scenes
+# C2R: Coarse-to-Real
 
 > **Status:** 🚧 Work in Progress — code and models will be released shortly.
 
