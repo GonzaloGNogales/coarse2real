@@ -43,6 +43,9 @@
                   Marc Comino-Trinidad<sup>1</sup>,
                 </span>
                 <span class="author-block">
+                  Peiye Zhuang<sup>3</sup>,
+                </span>
+                <span class="author-block">
                   <a href="https://dancasas.github.io/">Dan Casas</a><sup>1</sup>,
                 </span>
                 <span class="author-block">
@@ -83,29 +86,11 @@
           <div class="column">
             <div class="content">
               <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/scene1.mp4" type="video/mp4">
+                <source src="assets/video/new/teaser.mp4" type="video/mp4">
                 Your browser does not support the video tag.
               </video>
             </div>
           </div>
-        </div>
-
-      </div>
-      <div style="margin-bottom: 1rem;">
-        <button class="button is-small" onclick="togglePrompt('scene-different-cities')">Show/Hide Prompts</button>
-        <div id="scene-different-cities-prompts" style="display: none; margin-top: 1rem; font-size: 0.9rem;">
-          <details style="margin-bottom: 0.5rem;">
-            <summary style="cursor: pointer; font-weight: bold;">Zurich (top right)</summary>
-            <p style="margin-top: 0.5rem; padding-left: 1rem;">A modern video of Zurich in the early morning, with light snowfall under a pale winter sky. Streets are partially covered with fresh snow, footsteps visible on sidewalks. Few pedestrians walk calmly, wearing thick winter coats, knit hats, scarves, gloves, boots, mostly in neutral colors. Clean, well-maintained buildings with stone façades, sloped roofs, and large windows line the street. Trams move slowly along snow-dusted tracks. The soundscape is quiet and muffled, with soft ambient city noise. The lighting is cool and diffused, emphasizing a calm, serene Winter modo.</p>
-          </details>
-          <details style="margin-bottom: 0.5rem;">
-            <summary style="cursor: pointer; font-weight: bold;">Paris (bottom left)</summary>
-            <p style="margin-top: 0.5rem; padding-left: 1rem;">A cinematic video of Paris at dawn, filmed at street level near a Haussmann boulevard. The sky is pale blue and grey, with light rain falling and wet pavement reflecting warm streetlights. Few pedestrians walk calmly, some holding umbrellas, wearing long wool coats, scarves, trench coats, leather shoes, and muted neutral colors. A cyclist passes by wearing a rain jacket. Haussmann-style buildings with cream stone façades, wrought-iron balconies, tall windows, and mansard roofs line the street. Café terraces are closed, chairs stacked neatly. Subtle traffic in the background, soft ambient city sounds, realistic motion blur and natural lighting.</p>
-          </details>
-          <details style="margin-bottom: 0.5rem;">
-            <summary style="cursor: pointer; font-weight: bold;">Nairobi (bottom right)</summary>
-            <p style="margin-top: 0.5rem; padding-left: 1rem;">A modern video of Nairobi during the dry season in the early morning. The sky is pale blue with a light haze, and the air appears dry. Streets are dusty in some areas, with patches of worn asphalt and concrete sidewalks. Pedestrians, mostly Black people, walk at a normal pace, wearing practical everyday clothing such as T-shirts, light shirts, jeans, skirts, and simple jackets, suited to mild morning temperatures. Some carry backpacks or bags. Low-rise commercial buildings, apartment blocks, and small street shops line the road, showing signs of daily use rather than perfection. Matatus, motorcycles, and cars move steadily through traffic, stopping frequently. Trees and sparse greenery appear along the streets, slightly dry. The soundscape includes engine noise, footsteps, quiet conversations, and distant city activity. The lighting is natural and flat, with soft shadows, emphasizing an ordinary, lived-in morning atmosphere.</p>
-          </details>
         </div>
     </div>
   </div>
@@ -119,11 +104,11 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Traditional rendering pipelines rely on complex assets, accurate materials and lighting, and substantial computational resources to produce realistic imagery, yet they still face challenges in scalability and realism for populated dynamic scenes.
+            Traditional rendering pipelines rely on complex assets, accurate materials and lighting, and substantial computational resources to produce realistic imagery, yet they still face challenges in scalability and realism for populated dynamic scenes. 
             We present <strong>C2R (Coarse-to-Real)</strong>, a generative rendering framework that synthesizes real-style urban crowd videos from coarse 3D simulations. Our approach uses coarse 3D renderings to explicitly control scene layout, camera motion, and human trajectories, while a learned neural renderer generates realistic appearance, lighting, and fine-scale dynamics guided by text prompts.
           </p>
           <p>
-            To overcome the lack of paired training data between coarse simulations and real videos, we adopt a two-phase mixed CG–real training strategy that learns a strong generative prior from large-scale real footage and introduces controllability through shared implicit spatio-temporal features across domains. The resulting system supports coarse-to-fine control, generalizes across diverse CG and game inputs, and produces temporally consistent, controllable, and realistic urban scene videos from minimal 3D input.
+            To overcome the lack of paired training data between coarse simulations and real videos, we adopt a two-stage synthetic-real domain-hedging strategy that first learns a strong generative prior from large-scale real footage, then introduces controllability by using a small amount of paired synthetic coarse-fine data to anchor shared implicit spatio-temporal features across domains. The resulting system supports coarse-to-fine control, generalizes across diverse CG and game inputs, and produces temporally consistent, controllable, and realistic urban scene videos from minimal 3D input.
           </p>
         </div>
       </div>
@@ -136,6 +121,7 @@
   <div class="container is-max-desktop">
     <div class="columns is-centered">
       <div class="column is-full-width">
+        <h2 class="title is-3 has-text-centered">Pipeline Overview</h2>
         <div class="content">
           <img src="assets/image/pipeline_v3.png" alt="Coarse-to-Real pipeline overview" width="100%">
         </div>
@@ -155,61 +141,92 @@
           </p>
         </div>
         
-        <h3 class="title is-4">Scene: Change Cities and Weather</h3>
+        <h3 class="title is-4">Scene: Change Cities, Weather and Time Of Day</h3>
         <div class="columns is-centered">
           <div class="column">
             <div class="content">
               <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/scene2.mp4" type="video/mp4">
+                <source src="assets/video/new/results1.mp4" type="video/mp4">
                 Your browser does not support the video tag.
               </video>
             </div>
-          </div>
-        </div>
-        <div style="margin-bottom: 1rem;">
-          <button class="button is-small" onclick="togglePrompt('scene-london-shanghai-tokyo')">Show/Hide Prompts</button>
-          <div id="scene-london-shanghai-tokyo-prompts" style="display: none; margin-top: 1rem; font-size: 0.9rem;">
-            <details style="margin-bottom: 0.5rem;">
-              <summary style="cursor: pointer; font-weight: bold;">London (top right)</summary>
-              <p style="margin-top: 0.5rem; padding-left: 1rem;">A cinematic video of London in the evening, filmed near a modern financial district street. Foreground building is a long horizontal block with deep recessed horizontal bands. Background features vertical skyscrapers with simple grid geometry. Heavy rain falls steadily, creating reflections on dark asphalt and sidewalks. Moderate crowds move briskly, people holding umbrellas, some hurrying. Pedestrians wear dark trench coats, wool coats, suits, scarves, waterproof jackets, and leather shoes. Red double-decker buses and black taxis pass by. Modern and historic buildings mix together: glass office towers alongside stone façades with large windows. Streetlights and traffic signals glow warmly through the rain. The camera slowly tracks forward, capturing water splashes, reflections, and realistic motion blur.</p>
-            </details>
-            <details style="margin-bottom: 0.5rem;">
-              <summary style="cursor: pointer; font-weight: bold;">Shanghai (bottom left)</summary>
-              <p style="margin-top: 0.5rem; padding-left: 1rem;">A modern video of Shanghai in the early evening, under overcast skies with soft diffused light. High pedestrian density on a busy commercial street. People wear modern city attire: long coats, office wear, smart casual outfits, sneakers and dress shoes, many carrying bags or using smartphones. Tall glass skyscrapers and modern commercial buildings dominate the skyline, with LED signage beginning to glow. Reflections appear on glass surfaces. Foreground building is a long horizontal block with deep recessed horizontal bands. Background features vertical skyscrapers with simple grid geometry. The camera moves forward through the crowd, capturing urban energy, realistic crowd motion, and subtle ambient city noise.</p>
-            </details>
-            <details style="margin-bottom: 0.5rem;">
-              <summary style="cursor: pointer; font-weight: bold;">Tokyo (bottom right)</summary>
-              <p style="margin-top: 0.5rem; padding-left: 1rem;">A nighttime video of Tokyo in Shibuya, under clear skies with bright neon signage illuminating the streets. Dense crowds cross a large intersection, people moving in all directions. Pedestrians wear modern urban fashion: oversized jackets, hoodies, techwear, sneakers, backpacks, business suits, and long coats. Bright LED screens reflect on glass and asphalt. Foreground building is a long horizontal block with deep recessed horizontal bands. Background features vertical skyscrapers with simple grid geometry. The camera slowly pans, capturing the constant flow of people, taxis, and buses, with vivid colors, sharp reflections, and smooth cinematic motion.</p>
-            </details>
           </div>
         </div>
 
-        
         <div class="columns is-centered">
           <div class="column">
             <div class="content">
               <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/scene3.mp4" type="video/mp4">
+                <source src="assets/video/new/results2.mp4" type="video/mp4">
                 Your browser does not support the video tag.
               </video>
             </div>
           </div>
         </div>
-        <div style="margin-bottom: 1rem;">
-          <button class="button is-small" onclick="togglePrompt('scene-paris-zurich-sunny')">Show/Hide Prompts</button>
-          <div id="scene-paris-zurich-sunny-prompts" style="display: none; margin-top: 1rem; font-size: 0.9rem;">
-            <details style="margin-bottom: 0.5rem;">
-              <summary style="cursor: pointer; font-weight: bold;">Paris (top right)</summary>
-              <p style="margin-top: 0.5rem; padding-left: 1rem;">A cinematic video of Paris at dawn, filmed at street level near a Haussmann boulevard. The sky is pale blue and grey, with light rain falling and wet pavement reflecting warm streetlights. Few pedestrians walk calmly, some holding umbrellas, wearing long wool coats, scarves, trench coats, leather shoes, and muted neutral colors. A cyclist passes by wearing a rain jacket. Haussmann-style buildings with cream stone façades, wrought-iron balconies, tall windows, and mansard roofs line the street. Foreground building is a long horizontal block with deep recessed horizontal bands. Background features vertical skyscrapers with simple grid geometry. Café terraces are closed, chairs stacked neatly. Subtle traffic in the background, soft ambient city sounds, realistic motion blur and natural lighting.</p>
-            </details>
-            <details style="margin-bottom: 0.5rem;">
-              <summary style="cursor: pointer; font-weight: bold;">Zurich (bottom left)</summary>
-              <p style="margin-top: 0.5rem; padding-left: 1rem;">A modern video of Zurich in the early morning, with light snowfall under a pale winter sky. Streets are partially covered with fresh snow, footsteps visible on sidewalks. Few pedestrians walk calmly, wearing thick winter coats, knit hats, scarves, gloves, boots, mostly in neutral colors. Clean, well-maintained buildings with stone façades, sloped roofs, and large windows line the street. Foreground building is a long horizontal block with deep recessed horizontal bands. Background features vertical skyscrapers with simple grid geometry. Trams move slowly along snow-dusted tracks. The soundscape is quiet and muffled, with soft ambient city noise. The lighting is cool and diffused, emphasizing a calm, serene winter mood.</p>
-            </details>
-            <details style="margin-bottom: 0.5rem;">
-              <summary style="cursor: pointer; font-weight: bold;">Sunny (bottom right)</summary>
-              <p style="margin-top: 0.5rem; padding-left: 1rem;">People crossing a street, in a city, the day is clear and sunny, the streets are busy and there are different vehicles in the streets. Foreground building is a long horizontal block with deep recessed horizontal bands. Background features vertical skyscrapers with simple grid geometry, the streets are clean and people are wearing different types of clothes and styles suitable for warm summer days.</p>
-            </details>
+
+        <div class="columns is-centered">
+          <div class="column">
+            <div class="content">
+              <video controls width="100%" autoplay loop muted>
+                <source src="assets/video/new/results3.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns is-centered">
+          <div class="column">
+            <div class="content">
+              <video controls width="100%" autoplay loop muted>
+                <source src="assets/video/new/results4.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns is-centered">
+          <div class="column">
+            <div class="content">
+              <video controls width="100%" autoplay loop muted>
+                <source src="assets/video/new/results5.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns is-centered">
+          <div class="column">
+            <div class="content">
+              <video controls width="100%" autoplay loop muted>
+                <source src="assets/video/new/results6.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns is-centered">
+          <div class="column">
+            <div class="content">
+              <video controls width="100%" autoplay loop muted>
+                <source src="assets/video/new/results7.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns is-centered">
+          <div class="column">
+            <div class="content">
+              <video controls width="100%" autoplay loop muted>
+                <source src="assets/video/scene1.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
           </div>
         </div>
 
@@ -304,21 +321,45 @@
             Our model can turn a low-poly game video into real-style even though it has never been trained on any game videoss. It can add realism to the existing dynamics and appearance, add extra contents and solve collision issues in the original video.
           </p>
         </div>
+
         <div class="columns is-centered">
           <div class="column">
             <div class="content">
               <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/roblox_coast_0000.mp4" type="video/mp4">
+                <source src="assets/video/supplemental/blocky.mp4" type="video/mp4">
                 Your browser does not support the video tag.
               </video>
             </div>
           </div>
         </div>
+
         <div class="columns is-centered">
           <div class="column">
             <div class="content">
               <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/roblox_coast_0001.mp4" type="video/mp4">
+                <source src="assets/video/supplemental/roblox_application.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns is-centered">
+          <div class="column">
+            <div class="content">
+              <video controls width="100%" autoplay loop muted>
+                <source src="assets/video/supplemental/roblox_application2.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns is-centered">
+          <div class="column">
+            <div class="content">
+              <video controls width="100%" autoplay loop muted>
+                <source src="assets/video/supplemental/roblox_application3.mp4" type="video/mp4">
                 Your browser does not support the video tag.
               </video>
             </div>
@@ -404,11 +445,25 @@
       <div class="column">
         <h3 class="title is-4">Off-the-shelf and Commercial Models</h3>
         <div class="content">
-          <p>WAN2.1 (left column) and SORA (right column) show limited controllability over human motion and camera trajectories, and tend to generate similar viewing angles across populated urban scenes.</p>
+          <p><strong>WAN2.1 (left column) and SORA (right column):</strong> show limited controllability over human motion and camera trajectories, and tend to generate similar viewing angles across populated urban scenes.</p>
           <video controls width="100%" autoplay loop muted>
-            <source src="assets/video/commercial_models.mp4" type="video/mp4">
+            <source src="assets/video/others/commercial_models.mp4" type="video/mp4">
             Your browser does not support the video tag.
           </video>
+          <br>
+          <br>
+          <br>
+          <p><strong>Seedance 2.0:</strong> Under the same input conditions (coarse control video and text prompt), Seedance 2.0 exhibits limited ability to leverage the control signal, leading to weak alignment with the intended structure and semantics.</p>
+          <video controls width="100%" autoplay loop muted>
+            <source src="assets/video/others/seedance1.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <br>
+          <video controls width="100%" autoplay loop muted>
+            <source src="assets/video/others/seedance2.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <br>
         </div>
       </div>
     </div>
