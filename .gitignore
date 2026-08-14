@@ -39,6 +39,8 @@ outputs/
 .gradio_tmp/
 inference/preprocessed_control_videos/
 inference/prompt_enhancement_cache/
+/.runtime/
+/tests/
 
 # ------------------------------------------------------------
 # Python cache files

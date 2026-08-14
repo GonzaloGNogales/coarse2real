@@ -16,7 +16,12 @@ from PIL import Image
 from tqdm import tqdm
 
 from ..control.apg_utils import APGMomentum, apg_delta_x0, flow_pred_to_x0, x0_to_flow_pred
-from ..control.dino_control_module import DINOFeaturesExtractor
+from ..control.dino_control_module import (
+    DINOFeaturesExtractor,
+    apply_initial_dino_fusion,
+    dino_repeat_block_count,
+    dino_repeat_scale,
+)
 from ..models import ModelLoader
 from ..models.wan_video_dit import WanModel, sinusoidal_embedding_1d
 from ..models.wan_video_text_encoder import WanTextEncoder
@@ -754,7 +759,7 @@ def wan_video_denoise_step(
 
     x, (f, h, w) = dit.patchify(x)
     if dino_latents is not None:
-        x = x + dino_latents
+        x = apply_initial_dino_fusion(dit, x, dino_latents)
 
     if x.shape[0] != context.shape[0]:
         x = torch.cat([x] * context.shape[0], dim=0)
@@ -768,7 +773,12 @@ def wan_video_denoise_step(
         dim=-1,
     ).reshape(f * h * w, 1, -1).to(x.device)
 
-    for block in dit.blocks:
+    repeat_blocks = dino_repeat_block_count(dit) if dino_latents is not None else 0
+    dino_strength = float(getattr(dit, "dino_strength", 1.0))
+    for block_id, block in enumerate(dit.blocks):
+        if block_id < repeat_blocks:
+            block_scale = dino_repeat_scale(dit, block_id, repeat_blocks)
+            x = x + dino_strength * block_scale * dino_latents
         x = block(x, context, t_mod, freqs)
 
     x = dit.head(x, t)

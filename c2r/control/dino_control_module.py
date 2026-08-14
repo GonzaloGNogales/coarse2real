@@ -1,4 +1,5 @@
 import os
+import math
 from pathlib import Path
 from typing import List, Union
 
@@ -187,13 +188,97 @@ class TemporalDownsample(nn.Module):
         return x
 
 
-class DINO2WanLatentAdapter(nn.Module):
-    def __init__(self, Cd=768, C=5120, Td=81, T=21):
+class TemporalDownsampleV3(nn.Module):
+    """Causal two-stage temporal compression aligned with WAN VAE latents."""
+
+    def __init__(
+        self,
+        c_in: int = 768,
+        t_in: int = 81,
+        t_out: int = 21,
+        kernel: int = 3,
+        num_stages: int = 2,
+    ):
         super().__init__()
-        self.temporal_downsample = TemporalDownsample(Cd, Td, T)
+        self.kernel = kernel
+        self.pad_left = kernel - 1
+        self.convs = nn.ModuleList(
+            [
+                nn.Conv3d(
+                    c_in,
+                    c_in,
+                    kernel_size=(kernel, 1, 1),
+                    stride=(2, 1, 1),
+                    padding=0,
+                    groups=c_in,
+                    bias=False,
+                )
+                for _ in range(num_stages)
+            ]
+        )
+        if not self.convs[0].weight.is_meta:
+            self.reset_parameters()
+
+    @torch.no_grad()
+    def reset_parameters(self):
+        for conv in self.convs:
+            conv.weight.zero_()
+            conv.weight[:, 0, :, 0, 0].fill_(1.0 / self.kernel)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = rearrange(x, "b t h w c -> b c t h w").contiguous()
+        for conv in self.convs:
+            if self.pad_left > 0:
+                first = x[:, :, :1]
+                x = torch.cat(
+                    [first.repeat(1, 1, self.pad_left, 1, 1), x],
+                    dim=2,
+                )
+            x = conv(x)
+        return rearrange(x, "b c t h w -> b t h w c")
+
+
+class DINO2WanLatentAdapter(nn.Module):
+    """Adapter for the C2R architecture."""
+
+    def __init__(
+        self,
+        Cd=768,
+        C=5120,
+        Td=81,
+        T=21,
+        gated_control=False,
+        mlp_hidden_mult=4,
+    ):
+        super().__init__()
+        self.out_dim = C
+        self.temporal_mode = "v3"
+        self.spatial_align_mode = "identity"
+        self.adapter_proj_mode = "mlp"
+        self.gated_control = bool(gated_control)
+
+        self.temporal_downsample = TemporalDownsampleV3(Cd, Td, T)
         self.ln = nn.LayerNorm(Cd)
-        self.proj = nn.Linear(Cd, C)
+        hidden_dim = Cd * int(mlp_hidden_mult)
+        self.mlp = nn.Sequential(
+            nn.Linear(Cd, hidden_dim),
+            nn.SiLU(),
+            nn.Linear(hidden_dim, C),
+        )
         self.gate = nn.Parameter(torch.tensor(0.01))
+        if not self.ln.weight.is_meta:
+            self.reset_parameters()
+
+    @torch.no_grad()
+    def reset_parameters(self):
+        self.temporal_downsample.reset_parameters()
+        nn.init.ones_(self.ln.weight)
+        nn.init.zeros_(self.ln.bias)
+        nn.init.kaiming_normal_(self.mlp[0].weight, nonlinearity="relu")
+        nn.init.zeros_(self.mlp[0].bias)
+        nn.init.zeros_(self.mlp[-1].weight)
+        nn.init.zeros_(self.mlp[-1].bias)
+        self.gate.fill_(0.01)
 
     def forward(self, dino_patches):
         if dino_patches.ndim != 4:
@@ -201,7 +286,77 @@ class DINO2WanLatentAdapter(nn.Module):
         x = dino_patches.unsqueeze(0)  # [1, T, H, W, C]
         x = self.temporal_downsample(x)
         x = self.ln(x)
-        x = self.proj(x)
-        x = self.gate * x
+        x = self.mlp(x)
+        if self.gated_control:
+            x = self.gate * x
         x = rearrange(x, "b t h w c -> b (t h w) c").contiguous()
         return x
+
+
+class WanControlFusionBridge(nn.Module):
+    """Ungated residual MLP applied after additive control fusion."""
+
+    def __init__(
+        self,
+        C: int,
+        hidden_mult: float = 0.5,
+        gate_init: float = 0.01,
+        gated: bool = False,
+    ):
+        super().__init__()
+        hidden = max(1, round(C * float(hidden_mult)))
+        self.gate_init = float(gate_init)
+        self.gated = bool(gated)
+        self.ln = nn.LayerNorm(C)
+        self.fc1 = nn.Linear(C, hidden)
+        self.act = nn.SiLU()
+        self.fc2 = nn.Linear(hidden, C)
+        self.gate = nn.Parameter(torch.tensor(self.gate_init))
+        if not self.fc1.weight.is_meta:
+            self.reset_parameters()
+
+    @torch.no_grad()
+    def reset_parameters(self):
+        nn.init.ones_(self.ln.weight)
+        nn.init.zeros_(self.ln.bias)
+        nn.init.kaiming_uniform_(self.fc1.weight, a=math.sqrt(5))
+        nn.init.zeros_(self.fc1.bias)
+        nn.init.zeros_(self.fc2.weight)
+        nn.init.zeros_(self.fc2.bias)
+        self.gate.fill_(self.gate_init)
+
+    def forward(self, x):
+        residual = self.fc2(self.act(self.fc1(self.ln(x))))
+        if self.gated:
+            residual = self.gate * residual
+        return x + residual
+
+
+def apply_initial_dino_fusion(dit: nn.Module, x: torch.Tensor, control_tokens: torch.Tensor):
+    if x.shape[1:] != control_tokens.shape[1:]:
+        raise ValueError(
+            "DINO control token shape does not match WAN patch tokens: "
+            f"{control_tokens.shape} != {x.shape}"
+        )
+    strength = float(getattr(dit, "dino_strength", 1.0))
+    x = x + strength * control_tokens
+    bridge = getattr(dit, "dino_fusion_bridge", None)
+    if bridge is not None:
+        x = bridge(x)
+    return x
+
+
+def dino_repeat_block_count(dit: nn.Module) -> int:
+    repeat_n = int(getattr(dit, "repeat_dino_in_blocks", 0))
+    if repeat_n <= 0:
+        return 0
+    repeat_frac = float(getattr(dit, "dino_repeat_blocks_frac", 0.333))
+    return min(repeat_n, max(int(len(dit.blocks) * repeat_frac), 1))
+
+
+def dino_repeat_scale(dit: nn.Module, block_id: int, repeat_blocks: int) -> float:
+    if block_id < 0 or block_id >= repeat_blocks:
+        return 0.0
+    progress = block_id / max(repeat_blocks - 1, 1)
+    decay_min = float(getattr(dit, "dino_block_decay_min", 0.3))
+    return decay_min + (1.0 - decay_min) * (1.0 - progress)

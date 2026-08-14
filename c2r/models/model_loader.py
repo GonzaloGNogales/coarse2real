@@ -26,6 +26,10 @@ def init_dino_adapter(
     proj_zero: bool = False,
 ):
     adapter.to_empty(device=device)
+    reset_parameters = getattr(adapter, "reset_parameters", None)
+    if callable(reset_parameters):
+        reset_parameters()
+        return
 
     for name, p in adapter.named_parameters():
         if name.endswith("gate"):
@@ -161,18 +165,26 @@ def _instantiate_and_load_model(model_class, state_dict: dict, model_resource: s
     if hasattr(model, "eval"):
         model = model.eval()
 
-    adapter = getattr(model, "dino_patch_adapter", None)
-    if adapter is not None:
+    control_modules = (
+        getattr(model, "dino_patch_adapter", None),
+        getattr(model, "dino_fusion_bridge", None),
+    )
+    for control_module in control_modules:
+        if control_module is None:
+            continue
         init_dino_adapter(
-            adapter=adapter,
+            adapter=control_module,
             device=device,
             proj_zero=False,
         )
-        model.dino_patch_adapter.to(dtype=effective_dtype)
+        control_module.to(dtype=effective_dtype)
 
     missing, unexpected = model.load_state_dict(model_state_dict, assign=True, strict=False)
-    expected_adapter_only_missing = bool(missing) and all(name.startswith("dino_patch_adapter.") for name in missing)
-    if verbose and missing and not expected_adapter_only_missing:
+    expected_control_only_missing = bool(missing) and all(
+        name.startswith(("dino_patch_adapter.", "dino_fusion_bridge."))
+        for name in missing
+    )
+    if verbose and missing and not expected_control_only_missing:
         print("missing:", missing[:5], "...")
     if verbose and unexpected:
         print("unexpected:", unexpected[:5], "...")

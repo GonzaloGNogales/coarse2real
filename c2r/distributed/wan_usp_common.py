@@ -1,6 +1,11 @@
 import torch
 import torch.distributed as dist
 
+from ..control.dino_control_module import (
+    apply_initial_dino_fusion,
+    dino_repeat_block_count,
+    dino_repeat_scale,
+)
 from ..models.wan_video_dit import sinusoidal_embedding_1d
 
 
@@ -79,7 +84,8 @@ def _usp_dit_forward_impl(
 
     x, (f, h, w) = self.patchify(x)
     if dino_latents is not None:
-        x = x + dino_latents
+        x = apply_initial_dino_fusion(self, x, dino_latents)
+    repeat_ctrl = dino_latents
 
     if x.shape[0] != context.shape[0]:
         x = torch.cat([x] * context.shape[0], dim=0)
@@ -101,13 +107,36 @@ def _usp_dit_forward_impl(
             [x, x.new_zeros(x.shape[0], padded_seq_len - original_seq_len, x.shape[2])],
             dim=1,
         )
+        if repeat_ctrl is not None:
+            repeat_ctrl = torch.cat(
+                [
+                    repeat_ctrl,
+                    repeat_ctrl.new_zeros(
+                        repeat_ctrl.shape[0],
+                        padded_seq_len - original_seq_len,
+                        repeat_ctrl.shape[2],
+                    ),
+                ],
+                dim=1,
+            )
         freqs = _pad_sequence_freqs(freqs, padded_seq_len)
 
     seq_len_per_rank = padded_seq_len // sp_world_size
     local_freqs = _local_sequence_freqs(freqs, seq_len_per_rank)
     x = torch.chunk(x, sp_world_size, dim=1)[_get_sequence_parallel_rank()]
+    if repeat_ctrl is not None:
+        repeat_ctrl = torch.chunk(
+            repeat_ctrl,
+            sp_world_size,
+            dim=1,
+        )[_get_sequence_parallel_rank()]
 
-    for block in self.blocks:
+    repeat_blocks = dino_repeat_block_count(self) if repeat_ctrl is not None else 0
+    dino_strength = float(getattr(self, "dino_strength", 1.0))
+    for block_id, block in enumerate(self.blocks):
+        if block_id < repeat_blocks:
+            block_scale = dino_repeat_scale(self, block_id, repeat_blocks)
+            x = x + dino_strength * block_scale * repeat_ctrl
         x = block(x, context, t_mod, local_freqs)
 
     x = self.head(x, t)

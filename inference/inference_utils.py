@@ -26,7 +26,6 @@ except ModuleNotFoundError:
 
 DEFAULT_NEGATIVE_PROMPT = ("色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走")
 
-
 @dataclass
 class InferenceConfig:
     base_model_dir: str | None = None
@@ -274,6 +273,61 @@ def resolve_tokenizer_config(cfg: InferenceConfig, base_dir: Path) -> ModelConfi
     )
 
 
+def _load_trained_c2r_control(pipe: WanVideoPipeline, checkpoint_path: str) -> None:
+    state_dict = load_state_dict(checkpoint_path)
+
+    normalized_state_dict = {}
+    for key, value in state_dict.items():
+        normalized_key = key.removeprefix("pipe.dit.")
+        normalized_state_dict[normalized_key] = value
+
+    adapter_marker = "dino_patch_adapter."
+    bridge_marker = "dino_fusion_bridge."
+    adapter_state_dict = {
+        key.removeprefix(adapter_marker): value
+        for key, value in normalized_state_dict.items()
+        if key.startswith(adapter_marker)
+    }
+    bridge_state_dict = {
+        key.removeprefix(bridge_marker): value
+        for key, value in normalized_state_dict.items()
+        if key.startswith(bridge_marker)
+    }
+    unexpected_checkpoint_keys = sorted(
+        key
+        for key in normalized_state_dict
+        if not key.startswith((adapter_marker, bridge_marker))
+    )
+    if unexpected_checkpoint_keys:
+        raise ValueError(
+            "Unexpected tensors in trained C2R checkpoint: "
+            f"{unexpected_checkpoint_keys[:20]}"
+        )
+    if not adapter_state_dict or not bridge_state_dict:
+        raise ValueError(
+            "Checkpoint must contain both dino_patch_adapter and dino_fusion_bridge tensors."
+        )
+
+    adapter_missing, adapter_unexpected = pipe.dit.dino_patch_adapter.load_state_dict(
+        adapter_state_dict,
+        strict=False,
+    )
+    bridge_missing, bridge_unexpected = pipe.dit.dino_fusion_bridge.load_state_dict(
+        bridge_state_dict,
+        strict=False,
+    )
+    if set(adapter_missing) != {"gate"} or adapter_unexpected:
+        raise ValueError(
+            "DINO adapter checkpoint mismatch: "
+            f"missing={adapter_missing}, unexpected={adapter_unexpected}"
+        )
+    if set(bridge_missing) != {"gate"} or bridge_unexpected:
+        raise ValueError(
+            "DINO fusion bridge checkpoint mismatch: "
+            f"missing={bridge_missing}, unexpected={bridge_unexpected}"
+        )
+
+
 def build_pipeline(cfg: InferenceConfig, local_rank: int = 0, rank: int = 0) -> WanVideoPipeline:
     dtype = dtype_from_name(cfg.dtype)
     dit_paths, text_encoder_path, vae_path, base_dir, dit_source = resolve_model_paths(cfg)
@@ -322,19 +376,9 @@ def build_pipeline(cfg: InferenceConfig, local_rank: int = 0, rank: int = 0) -> 
         pipe.enable_vram_management(enabled=True, vram_buffer_gb=cfg.vram_buffer_gb)
 
     if cfg.dino_adapter_path:
-        state_dict = load_state_dict(cfg.dino_adapter_path)
-        adapter_marker = "dino_patch_adapter."
-        adapter_state_dict = {
-            key.split(adapter_marker, 1)[1]: value
-            for key, value in state_dict.items()
-            if adapter_marker in key
-        }
-        if not adapter_state_dict:
-            adapter_state_dict = state_dict
-        missing, unexpected = pipe.dit.dino_patch_adapter.load_state_dict(adapter_state_dict, strict=False)
+        _load_trained_c2r_control(pipe, cfg.dino_adapter_path)
         if rank == 0:
-            print(f"Loaded DINO adapter checkpoint: {cfg.dino_adapter_path}")
-            print(f"DINO adapter missing keys: {len(missing)} | unexpected keys: {len(unexpected)}")
+            print(f"Loaded trained C2R adapter and fusion bridge: {cfg.dino_adapter_path}")
     return pipe
 
 

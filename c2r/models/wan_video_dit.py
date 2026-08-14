@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import math
 from typing import Optional, Tuple
 from einops import rearrange
-from ..control.dino_control_module import DINO2WanLatentAdapter
+from ..control.dino_control_module import DINO2WanLatentAdapter, WanControlFusionBridge
 
 try:
     from flash_attn.cute import flash_attn_func as flash_attn_4_func
@@ -488,8 +488,24 @@ class WanModel(torch.nn.Module):
         head_dim = dim // num_heads
         self.freqs = precompute_freqs_cis_3d(head_dim)
         
-        # DINO control is injected directly into WAN patch latents in inference.
-        self.dino_patch_adapter = DINO2WanLatentAdapter(Cd=768, C=dim, Td=81, T=21)
+        # Trained C2R control architecture: 0c + F + A3 + D + E.
+        self.dino_patch_adapter = DINO2WanLatentAdapter(
+            Cd=768,
+            C=dim,
+            Td=81,
+            T=21,
+            gated_control=False,
+            mlp_hidden_mult=4,
+        )
+        self.dino_fusion_bridge = WanControlFusionBridge(
+            C=dim,
+            hidden_mult=0.5,
+            gated=False,
+        )
+        self.dino_strength = 1.0
+        self.repeat_dino_in_blocks = 13
+        self.dino_repeat_blocks_frac = 0.333
+        self.dino_block_decay_min = 0.3
 
     def patchify(self, x: torch.Tensor):
         x = self.patch_embedding(x)
