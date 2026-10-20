@@ -14,7 +14,7 @@
 </head>
 <body>
 
-<nav class="nav"><div class="wrap"><div class="nav-inner"><a class="nav-brand" href="#top">C2R</a><div class="nav-links"><a href="#abstract">Abstract</a><a href="#pipeline">Pipeline Overview</a><a href="#results">Results</a><a href="#applications">Applications</a><a href="#comparison">Comparison</a></div></div></div></nav>
+<nav class="nav nav-swipe"><div class="wrap"><div class="nav-inner"><a class="nav-brand" href="#top">C2R</a><div class="nav-links"><a href="#abstract">Abstract</a><a href="#pipeline">Pipeline Overview</a><a href="#results">Results</a><a href="#applications">Applications</a><a href="#comparison">Comparison</a></div></div></div></nav>
 <!-- ============================ Hero ============================ -->
 <header class="hero" id="top">
   <div class="wrap">
@@ -372,10 +372,38 @@
   if (!links.length) return;
   var sections = links.map(function (a) { return document.querySelector(a.hash); }).filter(Boolean);
   var current = null;
+  var row = document.querySelector('.nav-links');
+  // When the links form a sideways-scrolling row (swipeable nav on phones),
+  // slide the active link to the middle of the row so it is always in view.
+  function centerActive(a) {
+    if (!a || !row || row.scrollWidth <= row.clientWidth + 1) return;
+    var ar = a.getBoundingClientRect(), rr = row.getBoundingClientRect();
+    row.scrollTo({ left: row.scrollLeft + (ar.left - rr.left) - (row.clientWidth - ar.width) / 2, behavior: 'smooth' });
+  }
   function setActive(id) {
     if (id === current) return;
     current = id;
-    links.forEach(function (a) { a.classList.toggle('active', a.hash === '#' + id); });
+    var activeLink = null;
+    links.forEach(function (a) {
+      var on = a.hash === '#' + id;
+      a.classList.toggle('active', on);
+      if (on) activeLink = a;
+    });
+    centerActive(activeLink);
+  }
+  // Fade only the edges of the row that hide more links.
+  function edges() {
+    var max = row.scrollWidth - row.clientWidth;
+    row.classList.toggle('can-left', row.scrollLeft > 2);
+    row.classList.toggle('can-right', max > 2 && row.scrollLeft < max - 2);
+  }
+  if (row) {
+    row.addEventListener('scroll', edges, { passive: true });
+    window.addEventListener('resize', edges);
+    window.addEventListener('load', edges);
+    // Web fonts change the link widths after first paint: re-check once they arrive.
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { edges(); centerActive(row.querySelector('a.active')); });
+    edges();
   }
   function update() {
     var line = window.innerHeight * 0.35; // reference line in the upper third of the viewport

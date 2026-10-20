@@ -366,6 +366,23 @@ h3 {
   .nav-links { gap: 0; }
   .nav-links a { padding: 5px 6px; font-size: 0.7rem; line-height: 1.3; }
   .hero .wrap { padding-top: 100px; padding-bottom: 96px; }
+
+  /* Option A (enabled by adding the nav-swipe class to the nav): one-row pill,
+     brand pinned on the left, links scroll sideways, edges fade where more links hide */
+  .nav-swipe .nav-inner { width: 100%; min-width: 0; padding: 4px 4px 4px 14px; }
+  .nav-swipe .nav-brand { flex: none; font-size: 0.9rem; padding-right: 10px; margin-right: 0; border-right: 1px solid rgba(255, 255, 255, 0.14); border-radius: 0; }
+  .nav-swipe .nav-links {
+    --fl: 0px; --fr: 0px;
+    flex: 1 1 auto; min-width: 0; flex-wrap: nowrap; justify-content: flex-start; gap: 2px;
+    overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--fl), #000 calc(100% - var(--fr)), transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, #000 var(--fl), #000 calc(100% - var(--fr)), transparent 100%);
+  }
+  .nav-swipe .nav-links::-webkit-scrollbar { display: none; }
+  .nav-swipe .nav-links.can-left { --fl: 16px; }
+  .nav-swipe .nav-links.can-right { --fr: 28px; }
+  .nav-swipe .nav-links a { flex: none; white-space: nowrap; padding: 7px 11px; font-size: 0.78rem; }
+  .nav-swipe .nav-links a.active { box-shadow: none; }
   .teaser { margin-top: -72px; }
   .section { padding-top: 40px; }
   .stack { gap: 14px; }
