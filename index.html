@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="description" content="Coarse-to-Real">
@@ -7,500 +7,395 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>C2R: Coarse-to-Real</title>
 
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
-  <link rel="stylesheet" href="static/css/bulma.min.css">
-  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="static/css/index.css">
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script defer src="static/js/fontawesome.all.min.js"></script>
-  <script src="static/js/bulma-carousel.min.js"></script>
-  <script src="static/js/bulma-slider.min.js"></script>
 </head>
 <body>
 
-<section class="hero">
-  <div class="hero-body">
-    <div class="container is-max-desktop">
-      <div class="columns is-centered">
-        <div class="column has-text-centered">
-          <h1 class="title is-1 publication-title">C2R: Coarse-to-Real</h1>
-          <div class="is-size-5 publication-authors">
-            <span class="author-block">
-              <div class="is-size-5 publication-authors">
-                <span class="author-block">
-                  <a href="https://gonzalogn.com/">Gonzalo Gomez-Nogales</a><sup>1</sup>,
-                </span>
-                <span class="author-block">
-                  <a href="https://yiconghong.me/">Yicong Hong</a><sup>2</sup>,
-                </span>
-                <span class="author-block">
-                  <a href="https://chongjiange.github.io/">Chongjian Ge</a><sup>2</sup>,
-                </span>
-                <span class="author-block">
-                  Peiye Zhuang<sup>3</sup>,
-                </span>
-                <span class="author-block">
-                  <a href="https://dancasas.github.io/">Dan Casas</a><sup>1</sup> and
-                </span>
-                <span class="author-block">
-                  <a href="https://zhouyisjtu.github.io/">Yi Zhou</a><sup>3</sup>
-                </span>
-              </div>
+<nav class="nav"><div class="wrap"><div class="nav-inner"><a class="nav-brand" href="#top">C2R</a><div class="nav-links"><a href="#abstract">Abstract</a><a href="#pipeline">Pipeline Overview</a><a href="#results">Results</a><a href="#applications">Applications</a><a href="#comparison">Comparison</a></div></div></div></nav>
+<!-- ============================ Hero ============================ -->
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="venue">
+      <span class="dot"></span>
+      <span>NeurIPS 2026</span>
+      <span class="sep">&middot;</span>
+      <span>Sydney, Australia</span>
+    </div>
 
-              <div class="is-size-5 publication-authors" style="margin-top: 0.75rem;">
-                <span class="author-block"><sup>1</sup>Universidad Rey Juan Carlos</span>&nbsp;&nbsp;
-                <span class="author-block"><sup>2</sup>Adobe Research</span>
-                <span class="author-block"><sup>3</sup>Roblox</span>
-              </div>
+    <h1 class="title"><span class="brand">C2R: Coarse-to-Real</span></h1>
 
-              <div class="publication-links" style="margin-top: 0.75rem;">
-                <span class="link-block">
-                  <a href="https://arxiv.org/abs/2601.22301" class="button is-small is-rounded is-light">
-                    arXiv
-                  </a>
-                </span>
-                <span class="link-block">
-                  <a href="https://github.com/GonzaloGNogales/coarse2real/" class="button is-small is-rounded is-light">
-                    Code
-                  </a>
-                </span>
-				<span class="link-block">
-				  <a href="https://huggingface.co/gonsaBRK/coarse2real" class="button is-small is-rounded is-light">
-					Model Weights
-				  </a>
-				</span>
-              </div>
-            </span>
-          </div>
-        </div>
+    <p class="authors">
+      <span class="author"><a href="https://gonzalogn.com/">Gonzalo Gomez-Nogales</a><sup>1</sup>,</span>
+      <span class="author"><a href="https://yiconghong.me/">Yicong Hong</a><sup>2</sup>,</span>
+      <span class="author"><a href="https://chongjiange.github.io/">Chongjian Ge</a><sup>2</sup>,</span>
+      <span class="author"><a href="https://payeah.net/">Peiye Zhuang</a><sup>3</sup>,</span>
+      <span class="author"><a href="https://marccomino.github.io/">Marc Comino-Trinidad</a><sup>1</sup>,</span>
+      <span class="author"><a href="https://dancasas.github.io/">Dan Casas</a><sup>1</sup></span> and
+      <span class="author"><a href="https://zhouyisjtu.github.io/">Yi Zhou</a><sup>3</sup></span>
+    </p>
+
+    <p class="affils">
+      <span><sup>1</sup>Universidad Rey Juan Carlos</span>
+      <span><sup>2</sup>Adobe Research</span>
+      <span><sup>3</sup>Roblox</span>
+    </p>
+
+    <div class="links">
+      <a class="btn" href="https://arxiv.org/abs/2601.22301">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v15H6V2zm8 1.5V8h4.5L14 3.5zM8 11h8v1.6H8V11zm0 3.2h8v1.6H8v-1.6zm0 3.2h8V19H8v-1.6z"/></svg>
+        arXiv
+      </a>
+      <a class="btn" href="https://github.com/GonzaloGNogales/coarse2real/">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2.1c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.7 5.39-5.27 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+        Code
+      </a>
+      <a class="btn" href="https://huggingface.co/gonsaBRK/coarse2real">
+        <span class="emoji" aria-hidden="true">&#129303;</span>
+        Model Weights
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ============================ Teaser ============================ -->
+<div class="teaser">
+  <div class="wrap">
+    <div class="frame">
+      <video data-ar="2.3111" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+        <source src="assets/video/teaser.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </div>
+</div>
+
+<main>
+
+<!-- ============================ Abstract ============================ -->
+<section class="section abstract" id="abstract">
+  <div class="wrap">
+    <div class="section-head"><h2>Abstract</h2></div>
+    <div class="prose">
+      <p>
+        Traditional rendering pipelines rely on complex assets, accurate materials and lighting, and substantial computational resources to produce realistic imagery, yet they still face challenges in scalability and realism for populated dynamic scenes.
+        We present <strong>C2R (Coarse-to-Real)</strong>, a generative rendering framework that synthesizes real-style urban crowd videos from coarse 3D simulations. Our approach uses coarse 3D renderings to explicitly control scene layout, camera motion, and human trajectories, while a learned neural renderer generates realistic appearance, lighting, and fine-scale dynamics guided by text prompts.
+      </p>
+      <p>
+        To overcome the lack of paired training data between coarse simulations and real videos, we adopt a two-stage synthetic-real domain-hedging strategy that first learns a strong generative prior from large-scale real footage, then introduces controllability by using a small amount of paired synthetic coarse-fine data to anchor shared implicit spatio-temporal features across domains. The resulting system supports coarse-to-fine control, generalizes across diverse CG and game inputs, and produces temporally consistent, controllable, and realistic urban scene videos from minimal 3D input.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ Pipeline ============================ -->
+<section class="section" id="pipeline">
+  <div class="wrap">
+    <div class="section-head"><h2>Pipeline Overview</h2></div>
+    <div class="card pad">
+      <img src="assets/image/pipeline_v3.png" alt="Coarse-to-Real pipeline overview" width="100%">
+    </div>
+  </div>
+</section>
+
+<!-- ============================ Results ============================ -->
+<section class="section" id="results">
+  <div class="wrap">
+    <div class="section-head"><h2>Results</h2></div>
+    <div class="prose">
+      <p>
+        Our method generates photorealistic urban crowd videos from coarse 3D simulations across different scenes. <strong>For each of the scenes below, the top left video is the coarse driving input signal.</strong>
+      </p>
+    </div>
+
+    <h3>Changing Cities, Weather, and Time of Day Across Different Input Coarsening Levels</h3>
+    <div class="stack">
+      <div class="media">
+        <video data-ar="1.7333" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+          <source src="assets/video/results1.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="media">
+        <video data-ar="1.7333" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+          <source src="assets/video/results2.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="media">
+        <video data-ar="3.4667" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+          <source src="assets/video/results3.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="media">
+        <video data-ar="1.7333" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+          <source src="assets/video/results4.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="media">
+        <video data-ar="2.6000" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+          <source src="assets/video/results5.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="media">
+        <video data-ar="2.6000" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+          <source src="assets/video/results6.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="media">
+        <video data-ar="2.6000" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+          <source src="assets/video/results7.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="media">
+        <video data-ar="2.6000" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+          <source src="assets/video/results8.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="media">
+        <video data-ar="2.6000" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+          <source src="assets/video/results9.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </div>
+
+    <h3>Adding Landmarks</h3>
+    <div class="prose">Use text prompts to add landmarks like Eiffel Tower or Oriental Pearl TV Tower to the scene in the background.</div>
+    <div class="media">
+      <video data-ar="4.7094" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+        <source src="assets/video/scene5_1x3.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+
+    <h3>New York on A Different Day and Time</h3>
+    <div class="prose">Use text prompts to change the time and weather in New York.</div>
+    <div class="media">
+      <video data-ar="4.7094" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+        <source src="assets/video/scene6_1x3.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+
+    <h3>Coarsening Level Adaptation</h3>
+    <div class="prose">
+      <p>
+        Our method is compatible with different coarsening levels of input signal.
+        On the left column we show results for very coarse signal, where our model inpaints many details.
+        On the right we show a mid-coarse geometry as input that already includes some fine details.
+        Our model successfully follows the richer input signal, generating a video with the corresponding geometry.
+      </p>
+    </div>
+    <div class="media">
+      <video data-ar="1.7778" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+        <source src="assets/video/coarsening_levels.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ Applications ============================ -->
+<section class="section" id="applications">
+  <div class="wrap">
+    <div class="section-head"><h2>Applications</h2></div>
+    <div class="prose">
+      <p>
+        Our model can turn a low-poly game video into real-style even though it has never been trained on any game videos. It can add realism to the existing dynamics and appearance, add extra contents and solve collision issues in the original video.
+      </p>
+    </div>
+    <div class="stack">
+      <div class="media">
+        <video data-ar="3.4667" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+          <source src="assets/video/blocky.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="media">
+        <video data-ar="3.4667" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+          <source src="assets/video/roblox_application.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="media">
+        <video data-ar="3.4667" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+          <source src="assets/video/roblox_application2.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="media">
+        <video data-ar="3.4667" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+          <source src="assets/video/roblox_application3.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="media">
+        <video data-ar="3.4667" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+          <source src="assets/video/roblox_application4.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="media">
+        <video data-ar="3.4667" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+          <source src="assets/video/roblox_police_0000.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="media">
+        <video data-ar="3.4667" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+          <source src="assets/video/roblox_police_0009_v2.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="media">
+        <video data-ar="3.4667" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+          <source src="assets/video/roblox_police_0008_v2.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
       </div>
     </div>
   </div>
 </section>
 
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
+<!-- ============================ Comparison ============================ -->
+<div class="band">
+<section class="section" id="comparison">
+  <div class="wrap">
+    <div class="section-head"><h2>Comparison</h2></div>
 
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/teaser.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
+    <h3>Baseline comparison on coarse block-based character control</h3>
+    <div class="prose">
+      <p>
+        We compare C2R against several video generation and control baselines under extremely coarse block-character conditioning. While competing methods rely on additional depth, tracking, or reference-frame inputs and often fail to preserve character identity, motion, or scene structure, C2R directly uses the control video and text prompt to achieve robust synthetic-to-real transfer. Our method consistently preserves the input layout, motion dynamics, and character consistency, demonstrating the effectiveness of the proposed synthetic-real domain-hedging strategy for controllable realistic video generation from minimal coarse inputs.
+      </p>
     </div>
-  </div>
-</section>
+    <div class="media">
+      <video data-ar="3.4667" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+        <source src="assets/video/blocky_comp.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
 
-<section class="section" style="padding-top: 1rem;">
-  <div class="container is-max-desktop">
-    <!-- Abstract. -->
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-fit-content">
-        <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-justified">
-          <p>
-            Traditional rendering pipelines rely on complex assets, accurate materials and lighting, and substantial computational resources to produce realistic imagery, yet they still face challenges in scalability and realism for populated dynamic scenes. 
-            We present <strong>C2R (Coarse-to-Real)</strong>, a generative rendering framework that synthesizes real-style urban crowd videos from coarse 3D simulations. Our approach uses coarse 3D renderings to explicitly control scene layout, camera motion, and human trajectories, while a learned neural renderer generates realistic appearance, lighting, and fine-scale dynamics guided by text prompts.
-          </p>
-          <p>
-            To overcome the lack of paired training data between coarse simulations and real videos, we adopt a two-stage synthetic-real domain-hedging strategy that first learns a strong generative prior from large-scale real footage, then introduces controllability by using a small amount of paired synthetic coarse-fine data to anchor shared implicit spatio-temporal features across domains. The resulting system supports coarse-to-fine control, generalizes across diverse CG and game inputs, and produces temporally consistent, controllable, and realistic urban scene videos from minimal 3D input.
-          </p>
-        </div>
+    <h3>Baseline comparison on coarse humanoid character control</h3>
+    <div class="prose">
+      <p>
+        We also compare C2R against several recent baselines under the same prompt and control setup using humanoid coarse characters in the control input videos. Existing approaches typically rely on additional depth, tracking, or reference-image conditioning, yet often struggle to maintain accurate motion, camera trajectories, or structural consistency. In contrast, C2R directly uses the control video and text prompt without requiring reference images, achieving stronger controllability and more consistent synthetic-to-real transfer. While some baselines produce visually appealing outputs, they frequently fail to faithfully preserve the input motion and scene structure, highlighting the effectiveness of our domain-hedging strategy for controllable realistic video generation.
+      </p>
+    </div>
+    <div class="media">
+      <video data-ar="3.4667" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+        <source src="assets/video/humanoid_comp.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+
+    <h3>Off-the-shelf and Commercial Models</h3>
+    <div class="prose">
+      <p><strong>WAN2.1 (left column) and SORA (right column):</strong> show limited controllability over human motion and camera trajectories, and tend to generate similar viewing angles across populated urban scenes.</p>
+    </div>
+    <div class="media">
+      <video data-ar="3.1396" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+        <source src="assets/video/commercial_models.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+
+    <div class="prose" style="margin-top: 36px;">
+      <p><strong>Seedance 2.0 extended qualitative evaluation:</strong> Under the same input conditions (coarse control video and text prompt), Seedance 2.0 exhibits limited ability to leverage the control signal, leading to weak alignment with the intended structure and semantics.</p>
+    </div>
+    <div class="stack">
+      <div class="media">
+        <video data-ar="1.7333" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+          <source src="assets/video/seedance1.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
       </div>
-    </div>
-    <!--/ Abstract. -->
-  </div>
-</section>
-
-<section class="section" style="padding-top: 1rem;">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3 has-text-centered">Pipeline Overview</h2>
-        <div class="content">
-          <img src="assets/image/pipeline_v3.png" alt="Coarse-to-Real pipeline overview" width="100%">
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3 has-text-centered">Results</h2>
-        <div class="content has-text-justified">
-          <p>
-            Our method generates photorealistic urban crowd videos from coarse 3D simulations across different scenes. <strong>For each of the scenes below, the top left video is the coarse driving input signal.</strong>
-          </p>
-        </div>
-        
-        <h3 class="title is-5">Changing Cities, Weather, and Time of Day Across Different Input Coarsening Levels</h3>
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/results1.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/results2.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/results3.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/results4.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/results5.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/results6.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/results7.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/results8.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/results9.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-
-        <h3 class="title is-5">Adding Landmarks</h3>
-        <div class="content has-text-justified">Use text prompts to add landmarks like Eiffel Tower or Oriental Pearl TV Tower to the scene in the background.</div>
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/scene5_1x3.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-        <div style="margin-bottom: 1rem;">
-          <button class="button is-small" onclick="togglePrompt('scene-add-landmarks')">Show/Hide Prompts</button>
-          <div id="scene-add-landmarks-prompts" style="display: none; margin-top: 1rem; font-size: 0.9rem;">
-            <details style="margin-bottom: 0.5rem;">
-              <summary style="cursor: pointer; font-weight: bold;">Paris, Eiffel Tower</summary>
-              <p style="margin-top: 0.5rem; padding-left: 1rem;">A realistic, high-quality video set on a wide Parisian city street, surrounded by elegant mid-rise buildings with classic European façades forming an urban corridor. Two people enter from the lower-left foreground and walk forward side by side at a steady pace, while the camera smoothly follows behind them at pedestrian height, maintaining a stable forward-tracking motion. On the right side of the street, close to a building wall, two other people stand facing each other, actively talking and arguing with visible hand gestures and expressive body language. Pedestrians wear autumn clothing such as coats, jackets, dresses, scarves, and boots, suited to mild fall weather. Far ahead in the distance, another solitary person stands or walks slowly, appearing small due to depth and perspective. In the far background, framed between the buildings, the Eiffel Tower rises prominently on the skyline as a recognizable landmark. Human motion is natural and continuous, with realistic walking cycles and subtle gestures, while the camera movement remains smooth and stable. The scene is lit with soft natural daylight, clear depth, and balanced exposure, presented in a cinematic, photorealistic style with sharp details, clean textures, and no blur or visual artifacts.</p>
-            </details>
-            <details style="margin-bottom: 0.5rem;">
-              <summary style="cursor: pointer; font-weight: bold;">Shanghai, Oriental Pearl TV Tower</summary>
-              <p style="margin-top: 0.5rem; padding-left: 1rem;">A realistic, high-quality video set on a wide city street in Shanghai, surrounded by tall modern buildings forming a dense urban corridor. Two people enter from the lower-left foreground and walk forward side by side at a steady pace, while the camera smoothly follows behind them at pedestrian height, maintaining a stable forward-tracking motion. On the right side of the street, close to a building wall, two other people stand facing each other, actively talking and arguing with expressive hand gestures and animated body language. Far ahead in the distance, another solitary person appears small in the frame, standing or walking slowly. In the far background, visible between the buildings, the Oriental Pearl TV Tower rises prominently on the skyline as a recognizable Shanghai landmark. Human motion is natural and continuous, with realistic walking cycles and subtle gestures, and the camera movement remains smooth and consistent. The scene is lit with soft natural daylight and light urban haze, featuring clear depth, balanced exposure, and a cinematic, photorealistic style with sharp details, clean textures, and no blur or visual artifacts.</p>
-            </details>
-          </div>
-        </div>
-
-        <h3 class="title is-5">New York on A Different Day and Time</h3>
-        <div class="content has-text-justified">Use text prompts to change the time and weather in New York.</div>
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/scene6_1x3.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-        <div style="margin-bottom: 1rem;">
-          <button class="button is-small" onclick="togglePrompt('scene-new-york-times')">Show/Hide Prompts</button>
-          <div id="scene-new-york-times-prompts" style="display: none; margin-top: 1rem; font-size: 0.9rem;">
-            <details style="margin-bottom: 0.5rem;">
-              <summary style="cursor: pointer; font-weight: bold;">Early Morning</summary>
-              <p style="margin-top: 0.5rem; padding-left: 1rem;">A realistic, high-quality video of a city street scene in New York early in the morning. The environment follows a modern downtown layout with tall rectangular buildings forming an urban canyon and a wide asphalt street at street level. The camera is following one person walking forward on the street. The person wear suits, and his movements are natural and relaxed. Several vehicles, including sedans and SUVs, pass by smoothly in the background. The scene features realistic lighting, soft shadows, natural colors, and sharp details, with a cinematic, photorealistic style, high resolution, and no blur or visual artifacts.</p>
-            </details>
-            <details style="margin-bottom: 0.5rem;">
-              <summary style="cursor: pointer; font-weight: bold;">Snowy</summary>
-              <p style="margin-top: 0.5rem; padding-left: 1rem;">A realistic, high-quality video of a city street scene in New York on a snowy day. The environment follows a modern downtown layout with tall rectangular buildings forming an urban canyon and a wide asphalt street at street level. there's snow falling and snow on the street. The camera is following one person walking forward on the street. The person wear suits and coat, and his movements are natural and relaxed. Several vehicles, including sedans and SUVs, pass by smoothly in the background on the left side. on the right side are the buildings. The scene features realistic lighting, soft shadows, natural colors, and sharp details, with a cinematic, photorealistic style, high resolution, and no blur or visual artifacts.</p>
-            </details>
-          </div>
-        </div>
-
-        <h3 class="title is-4">Coarsening Level Adaptation</h3>
-        <div class="content has-text-justified">
-          <p>
-            Our method is compatible with different coarsening levels of input signal. 
-            On the left column we show results for very coarse signal, where our model inpaints many details. 
-            On the right we show a mid-coarse geometry as input that already includes some fine details. 
-            Our model successfully follows the richer input signal, generating a video with the corresponding geometry.
-          </p>
-        </div>
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/coarsening_levels.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-
-<section class="section">
-
-        <h2 class="title is-3 has-text-centered">Applications</h2>
-        <div class="content has-text-justified">
-          <p>
-            Our model can turn a low-poly game video into real-style even though it has never been trained on any game videos. It can add realism to the existing dynamics and appearance, add extra contents and solve collision issues in the original video.
-          </p>
-        </div>
-
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/blocky.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/roblox_application.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/roblox_application2.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/roblox_application3.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/roblox_application4.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/roblox_police_0000.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/roblox_police_0009_v2.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/roblox_police_0008_v2.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-</section>
-
-
-<section class="section">
-
-        <h2 class="title is-3 has-text-centered">Comparison</h2>
-        <h3 class="title is-4">Baseline comparison on coarse block-based character control</h3>
-        <div class="content has-text-justified">
-          <p>
-            We compare C2R against several video generation and control baselines under extremely coarse block-character conditioning. While competing methods rely on additional depth, tracking, or reference-frame inputs and often fail to preserve character identity, motion, or scene structure, C2R directly uses the control video and text prompt to achieve robust synthetic-to-real transfer. Our method consistently preserves the input layout, motion dynamics, and character consistency, demonstrating the effectiveness of the proposed synthetic-real domain-hedging strategy for controllable realistic video generation from minimal coarse inputs.
-          </p>
-        </div>
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/blocky_comp.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-
-        <h3 class="title is-4">Baseline comparison on coarse humanoid character control</h3>
-        <div class="content has-text-justified">
-          <p>
-            We also compare C2R against several recent baselines under the same prompt and control setup using humanoid coarse characters in the control input videos. Existing approaches typically rely on additional depth, tracking, or reference-image conditioning, yet often struggle to maintain accurate motion, camera trajectories, or structural consistency. In contrast, C2R directly uses the control video and text prompt without requiring reference images, achieving stronger controllability and more consistent synthetic-to-real transfer. While some baselines produce visually appealing outputs, they frequently fail to faithfully preserve the input motion and scene structure, highlighting the effectiveness of our domain-hedging strategy for controllable realistic video generation.
-          </p>
-        </div>
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="content">
-              <video controls width="100%" autoplay loop muted>
-                <source src="assets/video/humanoid_comp.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column">
-        <h3 class="title is-4">Off-the-shelf and Commercial Models</h3>
-        <div class="content">
-          <p><strong>WAN2.1 (left column) and SORA (right column):</strong> show limited controllability over human motion and camera trajectories, and tend to generate similar viewing angles across populated urban scenes.</p>
-          <video controls width="100%" autoplay loop muted>
-            <source src="assets/video/commercial_models.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-          <br>
-          <br>
-          <br>
-          <p><strong>Seedance 2.0 extended qualitative evaluation:</strong> Under the same input conditions (coarse control video and text prompt), Seedance 2.0 exhibits limited ability to leverage the control signal, leading to weak alignment with the intended structure and semantics.</p>
-          <video controls width="100%" autoplay loop muted>
-            <source src="assets/video/seedance1.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-          <br>
-          <video controls width="100%" autoplay loop muted>
-            <source src="assets/video/seedance2.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-          <br>
-        </div>
+      <div class="media">
+        <video data-ar="1.7333" disablepictureinpicture width="100%" autoplay loop muted playsinline>
+          <source src="assets/video/seedance2.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
       </div>
     </div>
   </div>
 </section>
+</div>
+
+</main>
 
 <footer class="footer">
-  <div class="container">
-    <div class="content has-text-centered">
-    </div>
+  <div class="wrap">
+    <div><strong>C2R: Coarse-to-Real</strong></div>
+    <div>NeurIPS 2026 &middot; Sydney, Australia</div>
   </div>
 </footer>
 
 <script>
-function togglePrompt(sceneId) {
-  var promptDiv = document.getElementById(sceneId + '-prompts');
-  if (promptDiv.style.display === 'none') {
-    promptDiv.style.display = 'block';
-  } else {
-    promptDiv.style.display = 'none';
+// Only keep videos playing while they are on screen (saves bandwidth and CPU
+// on a page with many autoplaying clips). Carousel slides are managed by the
+// carousel itself. Falls back to plain autoplay without IntersectionObserver.
+(function () {
+  if (!('IntersectionObserver' in window)) return;
+  var videos = document.querySelectorAll('video[autoplay]');
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      var v = e.target;
+      if (v.closest('[data-carousel]')) {
+        if (!e.isIntersecting) v.pause();
+        else if (v.closest('.slide').classList.contains('is-active')) { var q = v.play(); if (q && q.catch) q.catch(function () {}); }
+        return;
+      }
+      if (e.isIntersecting) {
+        var p = v.play();
+        if (p && p.catch) p.catch(function () {});
+      } else {
+        v.pause();
+      }
+    });
+  }, { rootMargin: '200px 0px' });
+  videos.forEach(function (v) { io.observe(v); });
+})();
+
+// Navigation scroll-spy: highlight the link of the section currently on screen.
+// No-op on pages without a navigation bar.
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.nav-links a[href^="#"]'));
+  if (!links.length) return;
+  var sections = links.map(function (a) { return document.querySelector(a.hash); }).filter(Boolean);
+  var current = null;
+  function setActive(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.toggle('active', a.hash === '#' + id); });
   }
-}
+  function update() {
+    var line = window.innerHeight * 0.35; // reference line in the upper third of the viewport
+    var best = null;
+    sections.forEach(function (s) {
+      var r = s.getBoundingClientRect();
+      if (r.top <= line) best = s; // sections are in document order: last one above the line wins
+    });
+    if (!best && sections.length && window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2) best = sections[sections.length - 1];
+    setActive(best ? best.id : null);
+  }
+  var ticking = false;
+  window.addEventListener('scroll', function () {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () { ticking = false; update(); });
+  }, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
 </script>
 
 </body>
