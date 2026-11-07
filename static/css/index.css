@@ -341,7 +341,7 @@ h3 {
 }
 .mosaic .labels li { min-width: 0; }
 .mosaic .labels span {
-  display: inline-block; max-width: 100%;
+  display: inline-block; vertical-align: top; max-width: 100%;
   padding: 0.3em 0.75em;
   background: rgba(10, 12, 18, 0.7);
   color: #fff;
@@ -352,6 +352,19 @@ h3 {
 }
 /* Our model's outputs are highlighted in the site's accent blue */
 .mosaic .labels .ours span { background: rgba(37, 99, 235, 0.7); font-weight: 700; }
+/* The two baseline-comparison mosaics still have labels burned into the pixels
+   under each chip, so their chips stay fully opaque to hide them. */
+.mosaic.cover .labels span { background: rgb(10, 12, 18); }
+.mosaic.cover .labels .ours span { background: rgb(37, 99, 235); }
+/* Phones: tiles of a 3- or 4-column mosaic are under 120px wide, so let the
+   chip text wrap onto a second line (breaks happen after hyphens and spaces)
+   instead of being cut off with an ellipsis. */
+@media (max-width: 600px) {
+  .mosaic .labels span {
+    font-size: 9px; line-height: 1.2; padding: 0.25em 0.5em;
+    white-space: normal; overflow: visible; text-overflow: clip; text-align: left;
+  }
+}
 
 /* Band: alternate background for the comparison section */
 .band {
